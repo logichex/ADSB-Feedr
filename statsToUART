@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import json, time, serial
+
+# Path to stats file (adjust to your setup)
+STATS_FILE = "/run/readsb/stats.json"
+SERIAL_PORT = "/dev/ttyS1"  # check your UART device (use `dmesg | grep tty`)
+BAUDRATE = 9600
+
+def get_stats():
+    try:
+        with open(STATS_FILE) as f:
+            data = json.load(f)
+        messages = data["last1min"]["messages"] if "last1min" in data else 0
+        aircraft = data["latest"]["aircraft_with_pos"] if "latest" in data else 0
+        local_rate = data["latest"]["local_rate"] if "latest" in data else 0
+        greater_3dbfs = data["latest"]["strong_signals"] if "latest" in data else 0
+        return messages, aircraft, local_rate, greater_3dbfs
+    except Exception as e:
+        return 0, 0, 0, 0
+
+def main():
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1)
+    while True:
+        msg_rate, planes, rate, strong = get_stats()
+        line = f"MSG:{msg_rate},PL:{planes},3DB:{strong}\n"
+        ser.write(line.encode('utf-8'))
+        time.sleep(5)
+
+if __name__ == "__main__":
+    main()
