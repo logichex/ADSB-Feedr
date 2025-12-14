@@ -6,26 +6,43 @@ STATS_FILE = "/run/readsb/stats.json"
 SERIAL_PORT = "/dev/ttyAML0"  # check your UART device (use `dmesg | grep tty`)
 BAUDRATE = 9600
 
+
 def get_stats():
     try:
         with open(STATS_FILE) as f:
             data = json.load(f)
-        messageRate = data["last1min"]["messages"] if "last1min" in data else 0
-        messageRate=Round(messageRate/60)
-        aircraft = data["now"]["aircraft_with_pos"] if "latest" in data else 0
-        local_rate = data["now"]["local_rate"] if "latest" in data else 0
-        greater_3dbfs = data["latest"]["strong_signals"] if "latest" in data else 0
-        return messages, aircraft, local_rate, greater_3dbfs
+        print("File open")
+
+        messageCount = data["last1min"]["messages_valid"] if "last1min" in data else 0
+        messageRate = round(messageCount / 60)
+        print("messageRate:",messageRate)
+
+        posCount=data["last1min"]["position_count_total"] if "last1min" in data else 0
+        print("posCount:",posCount)
+
+        aircraftCount = data["aircraft_with_pos"] if "aircraft_with_pos" in data else 0
+        print("aircraftCount:",aircraftCount)
+
+        greater_3dbfs = data["last1min"]["local"]["strong_signals"] if "last1min" in data else 0
+        print(">3dfs:",greater_3dbfs)
+
+        sdbr = round((greater_3dbfs / messageCount)*100,2)
+        print("Strong Signal Ratio",sdbr,"%")
+
+        return messageRate, aircraftCount,  posCount, greater_3dbfs, sdbr
     except Exception as e:
-        return 0, 0, 0, 0
+        print("Exception")
+        return 0, 0, 0, 0, 0
+
 
 def main():
     ser = serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1)
     while True:
-        msg_rate, planes, rate, strong = get_stats()
-        line = f"MSG:{msg_rate},PL:{planes},3DB:{strong}\n"
-        ser.write(line.encode('utf-8'))
+        msg_rate, acCount, posCount,  strong, strongRatio = get_stats()
+        line = f"msgRate:{msg_rate},posCount:{posCount},acCount:{acCount},3DB:{strong},3DBR:{strongRatio}\n"
+        ser.write(line.encode("utf-8"))
         time.sleep(5)
+
 
 if __name__ == "__main__":
     main()
