@@ -10,7 +10,8 @@ def get_stats():
     try:
         with open(STATS_FILE) as f:
             data = json.load(f)
-        messages = data["last1min"]["messages"] if "last1min" in data else 0
+        messageRate = data["last1min"]["messages"] if "last1min" in data else 0
+        messageRate=Round(messageRate/60)
         aircraft = data["now"]["aircraft_with_pos"] if "latest" in data else 0
         local_rate = data["now"]["local_rate"] if "latest" in data else 0
         greater_3dbfs = data["latest"]["strong_signals"] if "latest" in data else 0
