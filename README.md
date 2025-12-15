@@ -6,11 +6,13 @@ Below is a list of dust collecting hardware I used to bring this ADSB feeder to 
 
 - Old TV Box, what i had is WeChip V8 box. It's clone of any machine out there, has an Amlogic S905W 2GB Ram 16GB Emmc, running on Android 7 out of box. What i liked about this device was that UART port was available for my purposes, relatively powerful processing capability and passive cooling. Ideal mini-power device.
 
-- Since my TV box came with almost non-supported wireless chip, a USB wifi adapter was used.
+- Since my TV box came with almost non-supported wireless chip, a USB wifi adapter was used. It also has 100mbit ethernet but I don't have cable close to my feed location.
   
-- An RTL-SDR receiver, something like 10+ years of age but still strong.Based on RTL2832u.
+- An RTL-SDR receiver, something like 10+ years of age but still strong.Based on RTL2832u. Any RTL would work.
 
-- Optional Arduino Nano and LCD display. Arduino is primarily used as display I have two options built, one is the fancier 16x2 i2c blue LCD and other is classical 4 digit 7 segment display, which i had one in junk box from an old satellite receiver.
+- Optional Arduino board. I used a Nano which is primarily used as display driver but also allowing me to have many digital and analog ports with a linux machine, communicating over UART.
+  
+- I have two options built, one is the fancier 16x2 i2c blue LCD and other is classical 4 digit 7 segment display, which i had one in junk box from an old satellite receiver but i like the looks of 7 segments much more.
 
 - Other radio stuff, Low Noise Amp, 1090mhz filter, cabling etc.
 
